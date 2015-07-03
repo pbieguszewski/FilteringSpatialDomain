@@ -1,0 +1,7 @@
+*.sdf
+/x64
+/FilteringSpatialDomain/x64/
+/FilteringSpatialDomain/GeneratedFiles/
+*.opensdf
+*.suo
+*.user

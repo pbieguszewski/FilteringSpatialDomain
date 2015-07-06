@@ -8,6 +8,7 @@
 #include <QStandardItemModel>
 #include <QHeaderView>
 #include <QMessageBox>
+#include <QTableWidget>
 
 RunFilterDialog::RunFilterDialog(QWidget* parent) : QDialog(parent)
 {
@@ -18,13 +19,11 @@ RunFilterDialog::RunFilterDialog(QWidget* parent) : QDialog(parent)
 	mainLayout->setSpacing(6);
 	mainLayout->setContentsMargins(11, 11, 11, 11);
 
-	/*QTableView* */table = new QTableView(this);
+	table = new QTableWidget(this);
 	table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	table->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-	filterValue = new QStandardItemModel(this);
-	filterValue->setRowCount(3);
-	filterValue->setColumnCount(3);
-	table->setModel(filterValue);
+	table->setRowCount(3);
+	table->setColumnCount(3);
 	mainLayout->addWidget(table, 0, 0, 3, 1);
 
 
@@ -34,7 +33,7 @@ RunFilterDialog::RunFilterDialog(QWidget* parent) : QDialog(parent)
 	computeModeLayout->setSpacing(6);
 	computeModeLayout->setContentsMargins(11, 11, 11, 11);
 
-	/*QRadioButton* */cpuRB = new QRadioButton(computeModeGroup);
+	cpuRB = new QRadioButton(computeModeGroup);
 	cpuRB->setText("CPU");
 	cpuRB->setChecked(true);
 	computeModeLayout->addWidget(cpuRB);
@@ -51,7 +50,7 @@ RunFilterDialog::RunFilterDialog(QWidget* parent) : QDialog(parent)
 	filterDimLayout->setSpacing(6);
 	filterDimLayout->setContentsMargins(11, 11, 11, 11);
 
-	/*QRadioButton* */dim3RB = new QRadioButton(filterDimGroup);
+	dim3RB = new QRadioButton(filterDimGroup);
 	dim3RB->setText("3 x 3");
 	dim3RB->setChecked(true);
 	filterDimLayout->addWidget(dim3RB);
@@ -69,21 +68,22 @@ RunFilterDialog::RunFilterDialog(QWidget* parent) : QDialog(parent)
 	connect(buttons, &QDialogButtonBox::rejected, this, &RunFilterDialog::exitWithoutSave);
 	connect(buttons, &QDialogButtonBox::accepted, this, &RunFilterDialog::exitWithSave);
 	connect(dim3RB, &QRadioButton::clicked, [&]() { 
-		if (filterValue->rowCount() == 3)
+		if (table->rowCount() == 3)
 			return;
 		dim = 3;
-		filterValue->setRowCount(3);
-		filterValue->setColumnCount(3);
+		table->setRowCount(3);
+		table->setColumnCount(3);
 	});
 	connect(dim5RB, &QRadioButton::clicked, [&]() {
-		if (filterValue->rowCount() == 5)
+		if (table->rowCount() == 5)
 			return;
 		dim = 5; 
-		filterValue->setRowCount(5);
-		filterValue->setColumnCount(5);
+		table->setRowCount(5);
+		table->setColumnCount(5);
 	});
 	connect(cpuRB, &QRadioButton::clicked, [&]() { computeMode = ComputeMode::CPU; } );
 	connect(gpuRB, &QRadioButton::clicked, [&]() { computeMode = ComputeMode::GPU; } );
+	connect(table, &QTableWidget::itemChanged, this, &RunFilterDialog::checkCell);
 }
 
 RunFilterDialog::~RunFilterDialog() { ; }
@@ -98,19 +98,23 @@ void RunFilterDialog::exitWithSave()
 {
 	std::vector<double> vec;
 
-	for (auto i = 0; i < filterValue->columnCount(); i++)
+	for (auto i = 0; i < table->columnCount(); i++)
 	{
-		for (auto j = 0; j < filterValue->rowCount(); j++)
+		for (auto j = 0; j < table->rowCount(); j++)
 		{
-			auto item1 = filterValue->item(j, i);
-			if (item1 == nullptr)
+			auto item = table->item(i, j);
+			if (item == nullptr)
 			{
-				QMessageBox::information(this, "NULL", 
-					QString("(") + QString::number(i+1) + QString(", ") + QString::number(j+1) + QString(")"));
+				QMessageBox::warning(this, "Error",
+					QString("(") +
+					QString::number(i+1) +
+					QString(", ") +
+					QString::number(j+1) +
+					QString("): Empty value."));
 				return;
 			}
-			auto item2 = item1->data();
-			vec.push_back(item2.toDouble());
+			auto item2 = item->text().toDouble();
+			vec.push_back(item2);
 		}
 	}
 
@@ -132,7 +136,20 @@ void RunFilterDialog::refresh()
 	cpuRB->repaint();
 	dim3RB->setChecked(true);
 	dim3RB->repaint();
-	filterValue->clear();
-	filterValue->setRowCount(3);
-	filterValue->setColumnCount(3);
+	table->clear();
+	table->setRowCount(3);
+	table->setColumnCount(3);
+}
+
+void RunFilterDialog::checkCell(QTableWidgetItem* evt)
+{
+	bool checkNum = false;
+
+	evt->text().toDouble(&checkNum);
+
+	if (checkNum)
+		return;
+
+	QMessageBox::warning(this, "Error", "Invalid Value");
+	evt->setText(QString::number(0));
 }

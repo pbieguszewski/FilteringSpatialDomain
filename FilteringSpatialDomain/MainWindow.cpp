@@ -24,11 +24,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	file->setTitle("File");
 	menu->addAction(file->menuAction());
 
-	/*QAction* */openImage = new QAction(file);
+	openImage = new QAction(file);
 	openImage->setText("Open Image");
 	file->addAction(openImage);
 
-	/*QAction* */saveImage = new QAction(file);
+	saveImage = new QAction(file);
 	saveImage->setText("Save Image");
 	saveImage->setDisabled(true);
 	file->addAction(saveImage);
@@ -39,9 +39,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 	exit->setText("Exit");
 	file->addAction(exit);
 
-	/*QAction* */run = new QAction(menu);
+	run = new QAction(menu);
 	run->setText("Run");
-	//run->setDisabled(true);
+	run->setDisabled(true);
 	menu->addAction(run);
 
 	QAction* about = new QAction(menu);

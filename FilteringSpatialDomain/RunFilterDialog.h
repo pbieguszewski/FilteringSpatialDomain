@@ -5,9 +5,9 @@
 #include <QTableView>
 #include "ComputeMode.h"
 
-class QStandardItemModel;
 class QRadioButton;
-class QTableView;
+class QTableWidget;
+class QTableWidgetItem;
 
 class RunFilterDialog : public QDialog
 {
@@ -25,16 +25,15 @@ signals:
 private:
 
 	ComputeMode computeMode = ComputeMode::CPU;
-	QStandardItemModel* filterValue = nullptr;
+	QTableWidget* table = nullptr;
 	std::size_t dim = 3;
-
 	QRadioButton* cpuRB = nullptr;
 	QRadioButton* dim3RB = nullptr;
-	QTableView* table = nullptr;
-
+	
 	void exitWithoutSave();
 	void exitWithSave();
 	void refresh();
+	void checkCell(QTableWidgetItem* evt);
 
 	void closeEvent(QCloseEvent* e);
 

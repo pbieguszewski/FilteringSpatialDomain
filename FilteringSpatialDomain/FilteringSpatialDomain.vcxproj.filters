@@ -56,6 +56,12 @@
     <ClCompile Include="GeneratedFiles\Release\moc_AboutDialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="CpuFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GpuFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="MainWindow.h">
@@ -70,6 +76,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ComputeMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CpuFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GpuFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

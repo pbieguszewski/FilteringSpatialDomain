@@ -20,7 +20,7 @@ public:
 
 signals:
 
-	void sendValue(std::size_t dim, ComputeMode computeMode, std::vector<double>& vec);
+	void sendValue(std::size_t dim, ComputeMode computeMode, std::vector<float>& vec);
 
 private:
 

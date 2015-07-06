@@ -73,16 +73,14 @@
     <CustomBuild Include="RunFilterDialog.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ComputeMode.h">
+    <CustomBuild Include="ComputeMode.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CpuFilter.h">
+    </CustomBuild>
+    <CustomBuild Include="CpuFilter.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GpuFilter.h">
+    </CustomBuild>
+    <CustomBuild Include="GpuFilter.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
+    </CustomBuild>
   </ItemGroup>
 </Project>

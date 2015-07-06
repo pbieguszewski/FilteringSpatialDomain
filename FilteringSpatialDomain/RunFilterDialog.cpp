@@ -96,7 +96,7 @@ void RunFilterDialog::exitWithoutSave()
 
 void RunFilterDialog::exitWithSave()
 {
-	std::vector<double> vec;
+	std::vector<float> filter;
 
 	for (auto i = 0; i < table->columnCount(); i++)
 	{
@@ -114,13 +114,16 @@ void RunFilterDialog::exitWithSave()
 				return;
 			}
 			auto item2 = item->text().toDouble();
-			vec.push_back(item2);
+			filter.push_back(item2);
 		}
 	}
 
-	emit sendValue(dim, computeMode, vec);
+	auto dim = this->dim;
+	auto computeMode = this->computeMode;
+
 	refresh();
 	close();
+	emit sendValue(dim, computeMode, filter);
 }
 
 void RunFilterDialog::closeEvent(QCloseEvent* e)

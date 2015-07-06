@@ -7,6 +7,7 @@
 #include <QFuture>
 #include <QtConcurrent>
 #include <QResizeEvent>
+#include <QMessageBox>
 #include "AboutDialog.h"
 #include "RunFilterDialog.h"
 #include "CpuFilter.h"
@@ -126,7 +127,6 @@ void MainWindow::save()
 	openImage->setDisabled(false);
 	saveImage->setDisabled(false);
 	run->setDisabled(false);
-
 	workSpace->setCursor(Qt::ArrowCursor);
 }
 
@@ -138,10 +138,10 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 	scaleImg(event->size());
 }
 
-void MainWindow::scaleImg(QSize _size)
+void MainWindow::scaleImg(QSize size)
 {
 	QSize sizeImg_S = img.size();
-	sizeImg_S.scale(_size, Qt::KeepAspectRatio);
+	sizeImg_S.scale(size, Qt::KeepAspectRatio);
 
 	QSize sizeImg_F = img.size();
 	sizeImg_F.scale(sizeImg_S * 1.75, Qt::KeepAspectRatio);
@@ -159,18 +159,41 @@ void MainWindow::scaleImg(QSize _size)
 	workSpace->setPixmap(QPixmap::fromImage(scaledImg));
 }
 
-void MainWindow::applyFilter(std::size_t dim, ComputeMode computeMode, std::vector<double>& vec)
+void MainWindow::applyFilter(std::size_t dim, ComputeMode computeMode, const std::vector<float>& filter)
 {
-	switch (computeMode)
+	workSpace->setCursor(Qt::BusyCursor);
+	openImage->setDisabled(true);
+	saveImage->setDisabled(true);
+	run->setDisabled(true);
+
+	QFuture<void> th = QtConcurrent::run([&]() { 
+		switch (computeMode)
+		{
+		case ComputeMode::CPU:
+			img = CpuFilter()(img, dim, filter);
+			break;
+		case ComputeMode::GPU:
+			img = GpuFilter()(img, dim, filter);
+			break;
+		}
+		scaleImg(size());
+	});
+
+	try
 	{
-	case ComputeMode::CPU:
-		img = CpuFilter()(img, dim, vec);
-		break;
-	case ComputeMode::GPU:
-		img = GpuFilter()(img, dim, vec);
-		break;
-	default:
-		throw;
+		th.waitForFinished();
 	}
-	scaleImg(size());
+	catch (...)
+	{
+		QMessageBox::critical(this, "Fatal Error", "");
+		QCoreApplication::exit(1);
+	}
+
+	while (!th.isFinished())
+		QCoreApplication::processEvents();
+
+	openImage->setDisabled(false);
+	saveImage->setDisabled(false);
+	run->setDisabled(false);
+	workSpace->setCursor(Qt::ArrowCursor);
 }

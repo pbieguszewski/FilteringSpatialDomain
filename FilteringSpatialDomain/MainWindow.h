@@ -29,7 +29,7 @@ private:
 	void save();
 	void resizeEvent(QResizeEvent *event);
 	void scaleImg(QSize _size);
-	void applyFilter(std::size_t dim, ComputeMode computeMode, std::vector<double>& vec);
+	void applyFilter(std::size_t dim, ComputeMode computeMode, const std::vector<float>& filter);
 
 };
 

@@ -24,17 +24,19 @@ struct GpuFilter final
 private:
 
 	std::string kernel;
-	std::vector<cl_float4> inImg;
-	std::vector<cl_float4> outImg;
+	std::vector<cl_float3> inImg;
+	std::vector<cl_float3> outImg;
 	std::vector<cl_float> filter;
 
 	cl::Context context;
 	cl::CommandQueue queue;
 	cl::Kernel kernel_setFilter;
 
-	void prepareImg(const QImage& img);
+	void prepareImgIn(const QImage& img, std::size_t dim);
 	void prepareFilter(const std::vector<float>& filter);
 	void prepareOpenCL();
+	void setFilter(int width, int height, std::size_t dim);
+	QImage prepareImgOut(int width, int height, std::size_t dim);
 
 };
 

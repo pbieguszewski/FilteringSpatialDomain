@@ -82,7 +82,7 @@ void MainWindow::open()
 		return;
 
 	workSpace->setCursor(Qt::BusyCursor);
-	workSpace->setText("");
+	workSpace->setText("Loading image.");
 	openImage->setDisabled(true);
 	saveImage->setDisabled(true);
 	run->setDisabled(true);
@@ -162,6 +162,8 @@ void MainWindow::scaleImg(QSize size)
 void MainWindow::applyFilter(std::size_t dim, ComputeMode computeMode, const std::vector<float>& filter)
 {
 	workSpace->setCursor(Qt::BusyCursor);
+	workSpace->pixmap()->~QPixmap();
+	workSpace->setText("Applying filter.");
 	openImage->setDisabled(true);
 	saveImage->setDisabled(true);
 	run->setDisabled(true);
@@ -181,17 +183,16 @@ void MainWindow::applyFilter(std::size_t dim, ComputeMode computeMode, const std
 
 	try
 	{
-		th.waitForFinished();
+		while (!th.isFinished())
+			QCoreApplication::processEvents();
 	}
-	catch (...)
+	catch (QtConcurrent::Exception &ex)
 	{
-		QMessageBox::critical(this, "Fatal Error", "");
+		QMessageBox::critical(this, "Fatal Error", ex.what());
 		QCoreApplication::exit(1);
 	}
 
-	while (!th.isFinished())
-		QCoreApplication::processEvents();
-
+	workSpace->setText("");
 	openImage->setDisabled(false);
 	saveImage->setDisabled(false);
 	run->setDisabled(false);

@@ -96,7 +96,7 @@ void RunFilterDialog::exitWithoutSave()
 
 void RunFilterDialog::exitWithSave()
 {
-	std::vector<float> filter;
+	std::vector<float> filter = {-1,0,1,-2,0,2,-1,0,1};
 
 	for (auto i = 0; i < table->columnCount(); i++)
 	{
